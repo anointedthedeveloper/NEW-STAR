@@ -1,7 +1,7 @@
 /* Drift stylesheet. Colours/radii come from the active theme via looked-up values set on the scene root. */
 .root {
     -drift-bg: #0F1217; -drift-surface: rgba(23,27,34,0.88); -drift-surface-hi: rgba(34,40,50,0.93);
-    -drift-border: #2B3340; -drift-text: #E8ECF3; -drift-muted: #8C97A8; -drift-accent: #38BDF8;
+    -drift-input: rgba(0,0,0,0.25); -drift-nav: rgba(0,0,0,0.25); -drift-border: #2B3340; -drift-text: #E8ECF3; -drift-muted: #8C97A8; -drift-accent: #38BDF8;
     -drift-space: 8px;
     -fx-text-fill: -drift-text;
 }
@@ -45,7 +45,7 @@
 .drift-icon-button.mic-active { -fx-text-fill: #F87171; }
 
 .text-field, .text-area, .combo-box-base, .spinner .text-field {
-    -fx-background-color: rgba(0,0,0,0.25);
+    -fx-background-color: -drift-input;
     -fx-text-fill: -drift-text;
     -fx-prompt-text-fill: -drift-muted;
     -fx-highlight-fill: -drift-accent;
@@ -61,7 +61,7 @@
 .combo-box-popup .list-cell { -fx-background-color: -drift-bg; -fx-text-fill: -drift-text; }
 .combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:selected { -fx-background-color: -drift-surface-hi; }
 .check-box .label, .radio-button .label { -fx-text-fill: -drift-text; }
-.check-box .box { -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: -drift-border; -fx-background-radius: 4; -fx-border-radius: 4; }
+.check-box .box { -fx-background-color: -drift-input; -fx-border-color: -drift-border; -fx-background-radius: 4; -fx-border-radius: 4; }
 .check-box:selected .mark { -fx-background-color: -drift-accent; }
 .slider .track { -fx-background-color: -drift-border; }
 .slider .thumb { -fx-background-color: -drift-accent; }
@@ -71,7 +71,7 @@
 .scroll-bar { -fx-background-color: transparent; }
 .scroll-bar .thumb { -fx-background-color: -drift-border; -fx-background-radius: 4; }
 .scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 0; }
-.list-view, .table-view { -fx-background-color: rgba(0,0,0,0.2); -fx-border-color: -drift-border; -fx-border-radius: 6; -fx-background-radius: 6; }
+.list-view, .table-view { -fx-background-color: -drift-input; -fx-border-color: -drift-border; -fx-border-radius: 6; -fx-background-radius: 6; }
 .list-cell, .table-row-cell { -fx-background-color: transparent; -fx-text-fill: -drift-text; }
 .list-cell:selected, .table-row-cell:selected { -fx-background-color: derive(-drift-accent, -60%); }
 .table-view .column-header-background { -fx-background-color: -drift-surface-hi; }
@@ -84,7 +84,7 @@
 .tooltip { -fx-background-color: -drift-bg; -fx-text-fill: -drift-text; -fx-border-color: -drift-border; }
 
 .settings-root { -fx-background-color: -drift-bg; }
-.settings-nav { -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: transparent -drift-border transparent transparent; }
+.settings-nav { -fx-background-color: -drift-nav; -fx-border-color: transparent -drift-border transparent transparent; }
 .settings-nav .list-cell { -fx-padding: 8 14 8 14; -fx-text-fill: -drift-muted; }
 .settings-nav .list-cell:selected { -fx-background-color: -drift-surface-hi; -fx-text-fill: -drift-text; -fx-border-color: transparent transparent transparent -drift-accent; -fx-border-width: 0 0 0 3; }
 .settings-nav { -fx-background-radius: 0; -fx-border-radius: 0; }
@@ -99,10 +99,13 @@
 .check-box, .radio-button, .check-box:selected, .radio-button:selected { -fx-text-fill: -drift-text; }
 .spinner .increment-arrow-button, .spinner .decrement-arrow-button { -fx-background-color: -drift-surface-hi; -fx-background-radius: 4; }
 .spinner .increment-arrow-button .increment-arrow, .spinner .decrement-arrow-button .decrement-arrow { -fx-background-color: -drift-muted; }
-.spinner .text-field { -fx-text-fill: -drift-text; -fx-background-color: rgba(0,0,0,0.25); }
+.spinner .text-field { -fx-text-fill: -drift-text; -fx-background-color: -drift-input; }
 .combo-box-base .text-field { -fx-background-color: transparent; -fx-text-fill: -drift-text; }
 .combo-box-base .arrow-button { -fx-background-color: transparent; }
 .combo-box-base .arrow-button .arrow { -fx-background-color: -drift-muted; }
 .color-picker .color-picker-label .text { -fx-fill: -drift-text; -fx-text-fill: -drift-text; }
 .text-field:disabled, .check-box:disabled { -fx-opacity: 0.6; }
 .widget-big { -fx-font-size: 1.9em; }
+.spinner { -fx-background-color: transparent; -fx-background-insets: 0; -fx-border-width: 0; -fx-padding: 0; }
+.spinner > .text-field { -fx-background-color: -drift-input; -fx-background-insets: 0; -fx-text-fill: -drift-text; -fx-opacity: 1; }
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button { -fx-background-insets: 0; }

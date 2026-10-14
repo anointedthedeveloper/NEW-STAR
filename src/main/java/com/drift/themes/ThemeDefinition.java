@@ -57,9 +57,11 @@ public record ThemeDefinition(String name, boolean dark, String accent, double s
         String border = dark ? "#2B3340" : "#CBD3E0";
         String text = dark ? "#E8ECF3" : "#10151D";
         String muted = dark ? "#8C97A8" : "#5A6577";
+        String input = dark ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.9)";
+        String nav = dark ? "rgba(0,0,0,0.25)" : "rgba(0,0,0,0.04)";
         return String.format(java.util.Locale.ROOT,
                 "-drift-bg:%s;-drift-surface:%s;-drift-surface-hi:%s;-drift-border:%s;-drift-text:%s;-drift-muted:%s;"
-                        + "-drift-accent:%s;-drift-space:%.0fpx;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
-                bg, surface, surfaceHi, border, text, muted, accent, spacing(), fontFamily, fontSize);
+                        + "-drift-input:%s;-drift-nav:%s;-drift-accent:%s;-drift-space:%.0fpx;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
+                bg, surface, surfaceHi, border, text, muted, input, nav, accent, spacing(), fontFamily, fontSize);
     }
 }

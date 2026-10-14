@@ -4,7 +4,7 @@ Last updated at the end of the first implementation session. This file separates
 **what is implemented but could not be verified here**. The development sandbox was Linux (no Windows, no microphone,
 no media player), so every Windows-only feature is in the second group.
 
-Run summary: 100 tests, 0 failures, with the display, Vosk-model and Maven tests enabled (`xvfb-run -a mvn verify` plus the env vars listed under "Commands run"). Without those extras the display/model/Maven tests skip themselves.
+Run summary: 102 tests, 0 failures, with the display, Vosk-model and Maven tests enabled (`xvfb-run -a mvn verify` plus the env vars listed under "Commands run"). Without those extras the display/model/Maven tests skip themselves.
 
 ## Verified (automated tests or direct runs, on Linux + Xvfb)
 
@@ -30,7 +30,7 @@ Run summary: 100 tests, 0 failures, with the display, Vosk-model and Maven tests
 | Media layer: protocol with a helper process, capability-gated controls, crash restart, empty/unavailable states | `MediaDictationTest` (stand-in helper script; **not** the Windows API) |
 | Interface state machine (9 states) driven only by events; auto-dismiss; errors persist | `StateControllerTest` |
 | Window placement: anchors, multi-monitor clamp, unplugged monitor fallback, edge snap, grow-left near right edge | `WindowPlacementTest` |
-| Real JavaFX windows: floating window creation, state transitions from events, hide/show, settings applied live, "disable floating interface", 11 widgets created and running, clock shows system time, honest empty states, widget removal/persistence, all 15 settings sections build | `DesktopSmokeTest` (Xvfb); screenshots written to `target/screenshots` and inspected |
+| Real JavaFX windows (incl. typing a command into the assistant box and pressing the mic button with no model, both end to end; light theme; window sized to its content): floating window creation, state transitions from events, hide/show, settings applied live, "disable floating interface", 11 widgets created and running, clock shows system time, honest empty states, widget removal/persistence, all 15 settings sections build | `DesktopSmokeTest` (Xvfb); screenshots written to `target/screenshots` and inspected |
 | Widget config/layout validation, presets, restore previous | `PacksWidgetsTest` |
 | Theme serialisation/import validation (size cap, injection attempts), light/dark | `PersistenceTest`, `ThemeAndMaintenanceTest` |
 | Icon/wallpaper pack import: manifest, type allow-list, magic bytes, traversal, size bombs, duplicates, apply/revert (mock wallpaper API) | `PacksWidgetsTest` |

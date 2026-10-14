@@ -372,11 +372,11 @@ public class SettingsWindow {
 
     private Node commands() {
         TableView<ActionDefinition> t = new TableView<>(FXCollections.observableArrayList(svc.registry.all()));
-        t.getColumns().add(col("Action", a -> a.id(), 160));
-        t.getColumns().add(col("What it does", a -> a.description(), 330));
+        t.getColumns().add(col("Action", a -> a.id(), 150));
+        t.getColumns().add(col("What it does", a -> a.description(), 280));
         t.getColumns().add(col("Permission", a -> a.permission().name(), 90));
-        t.getColumns().add(col("Confirms", a -> a.confirmation() == ActionDefinition.Confirmation.ALWAYS ? "always" : "when risky", 80));
-        t.getColumns().add(col("Timeout", a -> a.timeout().toSeconds() + "s", 70));
+        t.getColumns().add(col("Confirms", a -> a.confirmation() == ActionDefinition.Confirmation.ALWAYS ? "always" : "when risky", 85));
+        t.getColumns().add(col("Timeout", a -> a.timeout().toSeconds() + "s", 75));
         t.setPrefHeight(360);
         return new VBox(14, group("Registered actions", null, note("Drift can only run actions on this list. Speech is never turned into arbitrary system commands. Process execution needs Developer mode; typing into other apps always shows a preview first."), t));
     }
@@ -474,7 +474,7 @@ public class SettingsWindow {
 
     private Node widgetsSection() {
         List<WidgetConfig> list = widgets.widgets();
-        ListView<String> lv = listView(list.stream().map(w -> w.id() + " - " + WidgetType.fromId(w.type()).map(t -> t.displayName).orElse(w.type())).toList(), 140);
+        ListView<String> lv = listView(list.stream().map(w -> WidgetType.fromId(w.type()).map(t -> t.displayName).orElse(w.type()) + "  (" + (int) w.width() + "\u00d7" + (int) w.height() + ", " + w.layout() + ")").toList(), 140);
         ComboBox<WidgetType> add = new ComboBox<>(FXCollections.observableArrayList(WidgetType.values()));
         add.setConverter(new javafx.util.StringConverter<>() { public String toString(WidgetType t) { return t == null ? "" : t.displayName; } public WidgetType fromString(String s) { return null; } });
         add.setPromptText("Choose a widget");
@@ -492,7 +492,7 @@ public class SettingsWindow {
         return new VBox(14,
                 group("Widgets on your desktop", IMMEDIATE, lv,
                         new HBox(8, add, Fx.button("Add", () -> { if (add.getValue() != null) { widgets.add(add.getValue()); status.setText("Added. Drag it where you want it; right-click for settings."); javafx.application.Platform.runLater(() -> showSection("Widgets")); } }, "primary"),
-                                Fx.button("Remove selected", () -> { String s = lv.getSelectionModel().getSelectedItem(); if (s != null) { widgets.remove(s.split(" - ")[0]); javafx.application.Platform.runLater(() -> showSection("Widgets")); } })),
+                                Fx.button("Remove selected", () -> { int i = lv.getSelectionModel().getSelectedIndex(); if (i >= 0 && i < list.size()) { widgets.remove(list.get(i).id()); javafx.application.Platform.runLater(() -> showSection("Widgets")); } })),
                         check("Keep widgets above other windows", widgets.alwaysOnTop(), widgets::setAlwaysOnTop),
                         note("Widgets float as small always-available windows. Embedding them into the Windows desktop layer is not supported (undocumented and unreliable); this is the documented fallback.")),
                 group("Layout presets", IMMEDIATE, row("Active preset", new HBox(8, layouts, Fx.button("Use", () -> { if (layouts.getValue() != null) { widgets.useLayout(layouts.getValue()); status.setText("Preset switched."); } }))),
@@ -544,7 +544,7 @@ public class SettingsWindow {
         var d = svc.settings.get().developer();
         TextField ide = new TextField(d.ide());
         ide.setPromptText("Path to your IDE executable (optional)");
-        ide.setPrefWidth(380);
+        ide.setPrefWidth(250);
         Spinner<Integer> timeout = intSpinner(5, 3600, d.commandTimeoutSeconds());
         ListView<String> roots = listView(d.projectRoots(), 90);
         ListView<String> projects = listView(svc.projects.list().stream().map(p -> (p.approved() ? "[approved]  " : "[not approved]  ") + p.path()).toList(), 120);
@@ -613,7 +613,8 @@ public class SettingsWindow {
         sb.append("Speech: ").append(st.state()).append(" - ").append(st.detail()).append('\n');
         sb.append("Microphones: ").append(svc.voice.microphones().isEmpty() ? "none detected" : String.join(", ", svc.voice.microphones())).append('\n');
         sb.append("Tray available: ").append(TrayController.supported()).append('\n');
-        sb.append("Media: ").append(svc.media.availability()).append('\n');
+        var mav = svc.media.availability();
+        sb.append("Media: ").append(mav.available() ? "available - " : "unavailable - ").append(mav.detail()).append('\n');
         sb.append("Applications discovered: ").append(svc.apps.apps().size()).append('\n');
         sb.append("Widgets open: ").append(widgets.openStages()).append('\n');
         sb.append("Operations recorded: ").append(svc.history.recent(1000).size()).append('\n');

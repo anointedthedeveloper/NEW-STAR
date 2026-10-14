@@ -119,6 +119,7 @@ class DesktopSmokeTest {
         assertThat(onFx(() -> fw.stage().getTitle())).isEqualTo(FloatingWindow.TITLE);
         assertThat(fw.model().state()).isEqualTo(InterfaceState.IDLE);
         double compactHeight = onFx(() -> fw.stage().getHeight());
+        Thread.sleep(600); settle();
         snapshot(fw.stage().getScene(), "01-idle");
 
         svc.bus.publish(new DriftEvent.ListeningStarted("COMMAND"));
@@ -149,6 +150,9 @@ class DesktopSmokeTest {
         svc.bus.publish(new DriftEvent.Failure("Microphone unavailable", "Cannot open the microphone: denied", "Choose another microphone in Settings"));
         settle();
         assertThat(fw.model().state()).isEqualTo(InterfaceState.ERROR);
+        Thread.sleep(300); settle();
+        // the window must be tall enough to show the whole panel (no clipped wrapped text)
+        assertThat(onFx(() -> fw.stage().getHeight())).isGreaterThanOrEqualTo(onFx(() -> fw.stage().getScene().getRoot().prefHeight(-1)) - 2);
         snapshot(fw.stage().getScene(), "06-error");
         fw.controller().dismiss();
         settle();
@@ -264,9 +268,87 @@ class DesktopSmokeTest {
             settle();
             Scene sc = onFx(() -> sw.stage().getScene());
             assertThat(onFx(() -> collectText(sc.getRoot()))).as(section).contains(section);
-            if (List.of("Appearance", "Voice recognition", "Widgets", "Developer mode").contains(section)) snapshot(sc, "settings-" + section.replace(' ', '-'));
+            if (true) snapshot(sc, "settings-" + section.replace(' ', '-'));
         }
         onFx(() -> { sw.close(); return null; });
+    }
+
+    @Test @Order(5) void lightThemeRendersEverywhere() throws Exception {
+        assumeTrue(fx, "no display");
+        svc.themes.apply("Drift Light");
+        settle();
+        FloatingWindow fw = onFx(() -> new FloatingWindow(svc, theme, () -> { }));
+        fw.show(); settle();
+        svc.bus.publish(new DriftEvent.ConfirmationRequested("p9", "Run `mvn -B clean` in /home/me/demo?"));
+        settle();
+        Thread.sleep(600); settle();
+        snapshot(fw.stage().getScene(), "light-confirm");
+        KvStore kv = ctx.getBean(KvStore.class);
+        WidgetManager wm = onFx(() -> new WidgetManager(svc, theme, kv, () -> { }));
+        SettingsWindow sw = onFx(() -> new SettingsWindow(svc, theme, kv, wm));
+        onFx(() -> { sw.show("Appearance"); return null; });
+        settle();
+        snapshot(onFx(() -> sw.stage().getScene()), "light-settings");
+        onFx(() -> { sw.close(); fw.close(); return null; });
+        svc.themes.apply("Drift Dark");
+    }
+
+    static void waitFor(java.util.function.BooleanSupplier cond, long millis) throws Exception {
+        long end = System.currentTimeMillis() + millis;
+        while (!cond.getAsBoolean() && System.currentTimeMillis() < end) Thread.sleep(50);
+    }
+
+    @Test @Order(6) void typingACommandAndPressingTheMicWorkEndToEnd() throws Exception {
+        assumeTrue(fx, "no display");
+        FloatingWindow fw = onFx(() -> new FloatingWindow(svc, theme, () -> { }));
+        fw.show(); settle();
+        svc.bus.publish(new DriftEvent.AssistantOpened());
+        settle();
+        assertThat(fw.model().state()).isEqualTo(InterfaceState.ASSISTANT);
+
+        // type into the assistant box and press Enter
+        javafx.scene.control.TextField input = onFx(() -> (javafx.scene.control.TextField) lookupType(fw.stage().getScene().getRoot(), javafx.scene.control.TextField.class));
+        onFx(() -> { input.setText("what song is playing"); input.fireEvent(new javafx.event.ActionEvent()); return null; });
+        waitFor(() -> fw.model().state() == InterfaceState.NOTIFICATION, 8000);
+        assertThat(fw.model().state()).isEqualTo(InterfaceState.NOTIFICATION);
+        assertThat(fw.model().detail()).containsIgnoringCase("can't read media sessions");
+
+        // an unsupported request is explained, not invented
+        svc.bus.publish(new DriftEvent.AssistantOpened());
+        settle();
+        javafx.scene.control.TextField input2 = onFx(() -> (javafx.scene.control.TextField) lookupType(fw.stage().getScene().getRoot(), javafx.scene.control.TextField.class));
+        onFx(() -> { input2.setText("run command del everything"); input2.fireEvent(new javafx.event.ActionEvent()); return null; });
+        waitFor(() -> fw.model().detail() != null && fw.model().detail().contains("never runs arbitrary"), 8000);
+        assertThat(fw.model().detail()).contains("never runs arbitrary commands");
+        assertThat(fw.model().ok()).isFalse();
+        fw.controller().dismiss();
+        settle();
+
+        // pressing the mic with no speech model installed gives a clear error state and never opens the microphone
+        javafx.scene.control.Button mic = onFx(() -> (javafx.scene.control.Button) lookupMic(fw.stage().getScene().getRoot()));
+        onFx(() -> { mic.fireEvent(new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_PRESSED, 1, 1, 1, 1, javafx.scene.input.MouseButton.PRIMARY, 1,
+                false, false, false, false, true, false, false, true, false, true, null)); return null; });
+        waitFor(() -> fw.model().state() == InterfaceState.ERROR, 8000);
+        assertThat(fw.model().state()).isEqualTo(InterfaceState.ERROR);
+        assertThat(fw.model().title()).contains("Speech recognition unavailable");
+        assertThat(fw.model().recovery()).isNotBlank();
+        assertThat(fw.model().micActive()).isFalse();
+        assertThat(svc.voice.isListening()).isFalse();
+        Thread.sleep(300);
+        snapshot(fw.stage().getScene(), "09-mic-error");
+        onFx(() -> { fw.close(); return null; });
+    }
+
+    static Node lookupType(Node root, Class<? extends Node> type) {
+        if (type.isInstance(root)) return root;
+        if (root instanceof javafx.scene.Parent p) for (Node c : p.getChildrenUnmodifiable()) { Node r = lookupType(c, type); if (r != null) return r; }
+        return null;
+    }
+
+    static Node lookupMic(Node root) {
+        if (root instanceof javafx.scene.control.Button b && b.getTooltip() != null && b.getTooltip().getText().startsWith("Hold to talk")) return b;
+        if (root instanceof javafx.scene.Parent p) for (Node c : p.getChildrenUnmodifiable()) { Node r = lookupMic(c); if (r != null) return r; }
+        return null;
     }
 
     static Node findByStyle(Node root, String style) {

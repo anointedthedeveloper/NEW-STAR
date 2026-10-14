@@ -271,6 +271,12 @@ public class FloatingWindow {
     private void positionStage(boolean initial) {
         DriftSettings.Floating f = svc.settings.get().floating();
         double w = f.width() + 20, h = contentHeight();
+        if (body.isVisible()) {
+            // size to the real content (wrapped text included) rather than a fixed estimate
+            panel.applyCss();
+            double pref = panel.prefHeight(f.width());
+            if (pref > 0) h = Math.min(760, Math.max(f.height() + 20, pref + 22));
+        }
         Rect desired;
         if (!stage.isShowing() || (initial && !f.customPosition())) {
             desired = f.customPosition() ? new Rect(f.x(), f.y(), w, h) : WindowPlacement.anchored(primary(), f.anchor(), w, h);
@@ -332,7 +338,12 @@ public class FloatingWindow {
         boolean hasBody = fillBody(m);
         body.setManaged(hasBody);
         body.setVisible(hasBody);
-        if (stage.isShowing()) { positionStage(false); applyNativeStyle(); }
+        if (stage.isShowing()) {
+            positionStage(false);
+            applyNativeStyle();
+            // wrapped labels only know their real height after one layout pass: measure again once
+            javafx.application.Platform.runLater(() -> { if (stage.isShowing() && model == m) positionStage(false); });
+        }
     }
 
     private boolean fillBody(UiModel m) {
