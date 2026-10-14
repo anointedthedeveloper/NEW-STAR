@@ -75,7 +75,10 @@ public class DriftFxApp extends Application {
         if (kv.getBool("media.enabled", true)) stopObserving = svc.media.observe();
         boolean background = getParameters().getRaw().contains("--background") || svc.settings.get().startup().startHidden();
         boolean firstRun = kv.get("firstRunDone").isEmpty();
-        if (!background || !trayOk) floating.show();
+        if (!background || !trayOk) {
+            floating.show();
+            if (svc.settings.get().floating().startExpanded() && svc.settings.get().floating().enabled()) svc.bus.publish(new DriftEvent.AssistantOpened());
+        }
         if (firstRun) {
             kv.put("firstRunDone", "true");
             settingsWindow.show("Voice recognition");

@@ -4,7 +4,7 @@ Last updated at the end of the first implementation session. This file separates
 **what is implemented but could not be verified here**. The development sandbox was Linux (no Windows, no microphone,
 no media player), so every Windows-only feature is in the second group.
 
-Run summary: `mvn test` -> all tests pass (see "Commands run" for the exact commands and counts).
+Run summary: 100 tests, 0 failures, with the display, Vosk-model and Maven tests enabled (`xvfb-run -a mvn verify` plus the env vars listed under "Commands run"). Without those extras the display/model/Maven tests skip themselves.
 
 ## Verified (automated tests or direct runs, on Linux + Xvfb)
 
