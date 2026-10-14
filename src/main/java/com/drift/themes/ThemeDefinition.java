@@ -40,6 +40,14 @@ public record ThemeDefinition(String name, boolean dark, String accent, double s
         return switch (density) { case "compact" -> 4; case "spacious" -> 12; default -> 8; };
     }
 
+    /** Stylesheet text for corner radii (JavaFX cannot resolve radius lookups, so these rules are generated per theme). */
+    public String radiusCss() {
+        if (!validate().isEmpty()) throw new IllegalStateException("Invalid theme: " + validate());
+        int r = (int) Math.round(cornerRadius), sm = (int) Math.round(cornerRadius * 0.7);
+        return ".drift-panel, .widget-panel, .settings-group { -fx-background-radius: " + r + "px; -fx-border-radius: " + r + "px; }\n"
+                + ".drift-button, .button, .text-field, .text-area, .combo-box-base, .spinner .text-field { -fx-background-radius: " + sm + "px; -fx-border-radius: " + sm + "px; }\n";
+    }
+
     /** Inline style for the scene root; the shared stylesheet resolves these looked-up colours. All values are validated first. */
     public String toRootStyle() {
         if (!validate().isEmpty()) throw new IllegalStateException("Invalid theme: " + validate());
@@ -51,7 +59,7 @@ public record ThemeDefinition(String name, boolean dark, String accent, double s
         String muted = dark ? "#8C97A8" : "#5A6577";
         return String.format(java.util.Locale.ROOT,
                 "-drift-bg:%s;-drift-surface:%s;-drift-surface-hi:%s;-drift-border:%s;-drift-text:%s;-drift-muted:%s;"
-                        + "-drift-accent:%s;-drift-radius:%.0f;-drift-radius-sm:%.0f;-drift-space:%.0f;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
-                bg, surface, surfaceHi, border, text, muted, accent, cornerRadius, cornerRadius * 0.7, spacing(), fontFamily, fontSize);
+                        + "-drift-accent:%s;-drift-space:%.0fpx;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
+                bg, surface, surfaceHi, border, text, muted, accent, spacing(), fontFamily, fontSize);
     }
 }

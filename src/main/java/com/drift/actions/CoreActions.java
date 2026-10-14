@@ -129,6 +129,7 @@ public class CoreActions {
         DevTemplates.Template t = templates.find(r.param("task")).orElse(null);
         if (t == null) return ActionResult.failure("Unknown developer task.");
         Path dir = paths.validateDirectory(r.param("projectPath"));
+        if (!projects.isApproved(dir.toString())) return ActionResult.failure("This project is not approved for build commands. Approve it in Settings > Developer.");
         if (!DevTemplates.isMavenProject(dir)) return ActionResult.failure("This folder has no pom.xml, so the Maven task cannot run.");
         List<String> cmd = templates.commandLine(t, dir, PlatformInfo.isWindows());
         int timeoutSeconds = settings.get().developer().commandTimeoutSeconds();

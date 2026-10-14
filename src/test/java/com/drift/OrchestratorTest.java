@@ -81,6 +81,7 @@ class OrchestratorTest {
         Path project = Files.createDirectories(dir.resolve("proj"));
         Files.writeString(project.resolve("pom.xml"), "<project/>");
         env.projects.markOpened(project);
+        env.projects.approve(project);
         CommandOutcome out = env.orchestrator.process("run the maven tests");
         assertThat(out).isInstanceOf(CommandOutcome.Refused.class);
         assertThat(out.message()).contains("Developer mode");
@@ -90,6 +91,7 @@ class OrchestratorTest {
         Path project = Files.createDirectories(dir.resolve("proj"));
         Files.writeString(project.resolve("pom.xml"), "<project/>");
         env.projects.markOpened(project);
+        env.projects.approve(project);
         env.settings.update(s -> new DriftSettings(s.appearance(), s.floating(), s.voice(), s.startup(),
                 new DriftSettings.Developer(true, "", java.util.List.of(), 60), s.privacy(), s.monitoring(), s.shortcuts(), s.weather()));
         CommandOutcome out = env.orchestrator.process("run maven clean");
@@ -140,5 +142,22 @@ class OrchestratorTest {
         assertThat(out).isInstanceOf(CommandOutcome.Failed.class);
         assertThat(out.message()).contains("Timed out");
         assertThat(env.history.recent(1).get(0).status()).isEqualTo("TIMEOUT");
+    }
+
+    @Test void unapprovedProjectsAreNeverBuilt() throws Exception {
+        Path project = Files.createDirectories(dir.resolve("untrusted"));
+        Files.writeString(project.resolve("pom.xml"), "<project/>");
+        env.projects.upsert(project);            // e.g. discovered by "find my java projects"
+        env.projects.markOpened(project);
+        env.settings.update(s -> s.withDeveloper(s.developer().withEnabled(true)));
+        CommandOutcome out = env.orchestrator.process("run the maven tests");
+        assertThat(out).isInstanceOf(CommandOutcome.Unsupported.class);
+        assertThat(out.message()).contains("approve");
+        // even a hand-built request for that path is refused at execution time
+        var direct = env.orchestrator.handle(new com.drift.actions.ActionRequest("dev.run", java.util.Map.of("task", "maven-test", "projectPath", project.toString()),
+                "x", com.drift.actions.Source.UI, null, "x"), "x");
+        assertThat(direct).isInstanceOf(CommandOutcome.Failed.class);
+        assertThat(direct.message()).contains("not approved");
+        assertThat(env.projects.isApproved(project.toString())).isFalse();
     }
 }

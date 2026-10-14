@@ -160,8 +160,8 @@ public class IntentResolver {
     private Resolution runDevTask(String task, String utterance) {
         Optional<DevTemplates.Template> t = templates.find(task);
         if (t.isEmpty()) return new Resolution.Unsupported("There is no approved command template for \"" + task + "\" yet, so I can't start the application that way.");
-        Optional<DevProjectRepository.Project> project = projects.mostRecent();
-        if (project.isEmpty()) return new Resolution.Unsupported("No development project is selected. Open a project first (\"open project ...\") or add one in Settings > Developer.");
+        Optional<DevProjectRepository.Project> project = projects.mostRecentApproved();
+        if (project.isEmpty()) return new Resolution.Unsupported("No approved development project. Building runs a project's own build scripts, so add and approve one in Settings > Developer first.");
         Path dir = Path.of(project.get().path());
         String exact = String.join(" ", templates.commandLine(t.get(), dir, com.drift.windows.PlatformInfo.isWindows()));
         String confirm = t.get().requiresConfirmation() ? "Run `" + exact + "` in " + dir + "?" : null;

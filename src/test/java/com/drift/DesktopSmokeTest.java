@@ -105,7 +105,7 @@ class DesktopSmokeTest {
         assertThat(svc.registry.all()).extracting("id").contains("app.open", "folder.open", "dev.run", "media.control", "dictation.start", "learn.remember", "widget.show");
         assertThat(ctx.getBean(com.drift.persistence.Database.class)).isNotNull();
         assertThat(svc.voice.providerStatus().state()).isIn(com.drift.speech.SpeechProvider.State.MODEL_MISSING, com.drift.speech.SpeechProvider.State.READY);
-        assertThat(svc.media.availability().available()).isFalse(); // Linux: honest unavailable
+        if (!com.drift.windows.PlatformInfo.isWindows()) assertThat(svc.media.availability().available()).isFalse(); // honest "unavailable" off Windows
         assertThat(svc.monitor.enabled()).isFalse();
     }
 

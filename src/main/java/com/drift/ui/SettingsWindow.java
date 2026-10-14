@@ -547,7 +547,7 @@ public class SettingsWindow {
         ide.setPrefWidth(380);
         Spinner<Integer> timeout = intSpinner(5, 3600, d.commandTimeoutSeconds());
         ListView<String> roots = listView(d.projectRoots(), 90);
-        ListView<String> projects = listView(svc.projects.list().stream().map(p -> p.path()).toList(), 120);
+        ListView<String> projects = listView(svc.projects.list().stream().map(p -> (p.approved() ? "[approved]  " : "[not approved]  ") + p.path()).toList(), 120);
         return new VBox(14,
                 group("Developer mode", IMMEDIATE, check("Allow approved build and test commands", d.enabled(), v -> change(s -> s.withDeveloper(s.developer().withEnabled(v)))),
                         row("IDE executable", new HBox(8, ide, Fx.button("Browse…", () -> { File f = new FileChooser().showOpenDialog(stage); if (f != null) ide.setText(f.getAbsolutePath()); }),
@@ -560,6 +560,17 @@ public class SettingsWindow {
                 group("Known projects (most recent first)", null, projects,
                         new HBox(8, Fx.button("Add project folder…", () -> { File f = new DirectoryChooser().showDialog(stage); if (f != null) { svc.projects.upsert(f.toPath()); showSection("Developer mode"); } }),
                                 Fx.button("Forget selected", () -> { String sel = projects.getSelectionModel().getSelectedItem(); if (sel != null) { svc.projects.remove(sel); showSection("Developer mode"); } }))));
+    }
+
+    /** Approves a project and, if it lies outside the folders Drift may use, adds it as an explicit project root. */
+    private void approveProject(Path dir) {
+        svc.projects.approve(dir);
+        Path real;
+        try { real = dir.toRealPath(); } catch (java.io.IOException e) { status.setText("Folder not accessible: " + e.getMessage()); return; }
+        boolean covered = svc.settings.get().developer().projectRoots().stream().anyMatch(r -> real.startsWith(Path.of(r)))
+                || com.drift.windows.KnownFolders.standard().values().stream().anyMatch(real::startsWith);
+        if (!covered) change(s -> { List<String> n = new ArrayList<>(s.developer().projectRoots()); n.add(real.toString()); return s.withDeveloper(s.developer().withProjectRoots(n)); });
+        status.setText("Approved " + real.getFileName() + " for build and test commands.");
     }
 
     private Node privacy() {

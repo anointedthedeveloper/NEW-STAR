@@ -2,15 +2,15 @@
 .root {
     -drift-bg: #0F1217; -drift-surface: rgba(23,27,34,0.88); -drift-surface-hi: rgba(34,40,50,0.93);
     -drift-border: #2B3340; -drift-text: #E8ECF3; -drift-muted: #8C97A8; -drift-accent: #38BDF8;
-    -drift-radius: 10; -drift-radius-sm: 7; -drift-space: 8;
+    -drift-space: 8px;
     -fx-text-fill: -drift-text;
 }
 .label, .text { -fx-text-fill: -drift-text; }
 .drift-window { -fx-background-color: transparent; }
 .drift-panel {
     -fx-background-color: -drift-surface;
-    -fx-background-radius: -drift-radius;
-    -fx-border-radius: -drift-radius;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
     -fx-border-color: -drift-border;
     -fx-border-width: 1;
     -fx-padding: 10 12 10 12;
@@ -29,8 +29,8 @@
 .drift-button, .button {
     -fx-background-color: -drift-surface-hi;
     -fx-text-fill: -drift-text;
-    -fx-background-radius: -drift-radius-sm;
-    -fx-border-radius: -drift-radius-sm;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
     -fx-border-color: -drift-border;
     -fx-padding: 4 10 4 10;
     -fx-cursor: hand;
@@ -50,8 +50,8 @@
     -fx-prompt-text-fill: -drift-muted;
     -fx-highlight-fill: -drift-accent;
     -fx-highlight-text-fill: #0B0F14;
-    -fx-background-radius: -drift-radius-sm;
-    -fx-border-radius: -drift-radius-sm;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
     -fx-border-color: -drift-border;
 }
 .text-area .content { -fx-background-color: transparent; }
@@ -88,10 +88,10 @@
 .settings-nav .list-cell { -fx-padding: 8 14 8 14; -fx-text-fill: -drift-muted; }
 .settings-nav .list-cell:selected { -fx-background-color: -drift-surface-hi; -fx-text-fill: -drift-text; -fx-border-color: transparent transparent transparent -drift-accent; -fx-border-width: 0 0 0 3; }
 .settings-nav { -fx-background-radius: 0; -fx-border-radius: 0; }
-.settings-group { -fx-background-color: -drift-surface; -fx-background-radius: -drift-radius; -fx-border-radius: -drift-radius; -fx-border-color: -drift-border; -fx-padding: 12; }
+.settings-group { -fx-background-color: -drift-surface; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-border-color: -drift-border; -fx-padding: 12; }
 .badge { -fx-background-color: -drift-surface-hi; -fx-background-radius: 8; -fx-padding: 1 7 1 7; -fx-text-fill: -drift-muted; -fx-font-size: 0.85em; }
 
-.widget-panel { -fx-background-color: -drift-surface; -fx-background-radius: -drift-radius; -fx-border-radius: -drift-radius; -fx-border-color: -drift-border; -fx-padding: 8 10 8 10; }
+.widget-panel { -fx-background-color: -drift-surface; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-border-color: -drift-border; -fx-padding: 8 10 8 10; }
 .widget-big { -fx-font-size: 2.2em; -fx-font-weight: bold; -fx-text-fill: -drift-text; }
 .widget-label { -fx-text-fill: -drift-muted; -fx-font-size: 0.8em; }
 .calendar-today { -fx-background-color: -drift-accent; -fx-text-fill: #0B0F14; -fx-background-radius: 10; }
