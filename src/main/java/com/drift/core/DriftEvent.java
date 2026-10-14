@@ -19,5 +19,7 @@ public sealed interface DriftEvent {
     record Failure(String title, String detail, String recovery) implements DriftEvent {}
     record AssistantOpened() implements DriftEvent {}
     record SettingsChanged() implements DriftEvent {}
+    record LayoutChanged() implements DriftEvent {}
+    record Reply(String message, boolean ok) implements DriftEvent {}
     record DictationChanged(String state, String target, String text) implements DriftEvent {}
 }
