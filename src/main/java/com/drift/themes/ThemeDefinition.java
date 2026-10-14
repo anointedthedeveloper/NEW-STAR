@@ -44,14 +44,14 @@ public record ThemeDefinition(String name, boolean dark, String accent, double s
     public String toRootStyle() {
         if (!validate().isEmpty()) throw new IllegalStateException("Invalid theme: " + validate());
         String bg = dark ? "#0F1217" : "#F4F6FA";
-        String surface = dark ? "#171B22" : "#FFFFFF";
-        String surfaceHi = dark ? "#1F252E" : "#E9EDF4";
+        String surface = String.format(java.util.Locale.ROOT, "rgba(%s,%.2f)", dark ? "23,27,34" : "255,255,255", surfaceOpacity);
+        String surfaceHi = String.format(java.util.Locale.ROOT, "rgba(%s,%.2f)", dark ? "34,40,50" : "233,237,244", Math.min(1.0, surfaceOpacity + 0.05));
         String border = dark ? "#2B3340" : "#CBD3E0";
         String text = dark ? "#E8ECF3" : "#10151D";
         String muted = dark ? "#8C97A8" : "#5A6577";
         return String.format(java.util.Locale.ROOT,
                 "-drift-bg:%s;-drift-surface:%s;-drift-surface-hi:%s;-drift-border:%s;-drift-text:%s;-drift-muted:%s;"
-                        + "-drift-accent:%s;-drift-radius:%.0f;-drift-space:%.0f;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
-                bg, surface, surfaceHi, border, text, muted, accent, cornerRadius, spacing(), fontFamily, fontSize);
+                        + "-drift-accent:%s;-drift-radius:%.0f;-drift-radius-sm:%.0f;-drift-space:%.0f;-fx-font-family:'%s';-fx-font-size:%.0fpx;",
+                bg, surface, surfaceHi, border, text, muted, accent, cornerRadius, cornerRadius * 0.7, spacing(), fontFamily, fontSize);
     }
 }

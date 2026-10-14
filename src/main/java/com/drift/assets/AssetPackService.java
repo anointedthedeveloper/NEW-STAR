@@ -51,6 +51,7 @@ public class AssetPackService {
     private final SettingsService settings;
     private final WallpaperSetter wallpaper;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AssetPackService(DriftPaths paths, Database db, SettingsService settings, WallpaperSetter wallpaper) {
         this(paths.packs(), db, settings, wallpaper);
     }

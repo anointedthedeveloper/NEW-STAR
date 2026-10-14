@@ -6,17 +6,17 @@ import java.util.Optional;
 
 /** The widget kinds Drift ships. Pure data; JavaFX rendering lives in the ui package. */
 public enum WidgetType {
-    DIGITAL_CLOCK("digital-clock", "Digital clock", "clock", 160, 70),
+    DIGITAL_CLOCK("digital-clock", "Digital clock", "clock", 210, 84),
     ANALOG_CLOCK("analog-clock", "Analog clock", "analog clock", 150, 150),
     CALENDAR("calendar", "Calendar", "calendar", 220, 200),
-    WEATHER("weather", "Weather", "weather", 200, 100),
-    SYSTEM_MONITOR("system-monitor", "System monitor", "system monitor", 220, 130),
-    BATTERY("battery", "Battery", "battery", 150, 60),
+    WEATHER("weather", "Weather", "weather", 230, 110),
+    SYSTEM_MONITOR("system-monitor", "System monitor", "system monitor", 240, 150),
+    BATTERY("battery", "Battery", "battery", 180, 90),
     MEDIA_PLAYER("media-player", "Media player", "music", 280, 110),
-    QUICK_LAUNCH("quick-launch", "Quick launch", "quick launch", 220, 100),
+    QUICK_LAUNCH("quick-launch", "Quick launch", "quick launch", 250, 120),
     NOTES("notes", "Notes", "notes", 220, 160),
     TIMER("timer", "Timer", "timer", 180, 100),
-    COUNTDOWN("countdown", "Countdown", "countdown", 200, 100);
+    COUNTDOWN("countdown", "Countdown", "countdown", 230, 100);
 
     public final String id;
     public final String displayName;

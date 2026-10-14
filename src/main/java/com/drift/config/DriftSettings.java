@@ -18,32 +18,89 @@ public record DriftSettings(
 
     public static final Pattern HEX = Pattern.compile("^#[0-9a-fA-F]{6}$");
 
-    public record Appearance(String themeName, boolean reducedMotion, String iconPack) {}
+    public record Appearance(String themeName, boolean reducedMotion, String iconPack) {
+        public Appearance withThemeName(String v) { return new Appearance(v, reducedMotion, iconPack); }
+        public Appearance withReducedMotion(boolean v) { return new Appearance(themeName, v, iconPack); }
+        public Appearance withIconPack(String v) { return new Appearance(themeName, reducedMotion, v); }
+    }
 
     public record Floating(boolean enabled, boolean alwaysOnTop, double opacity, double width, double height,
                            String anchor, double x, double y, boolean customPosition, boolean clickThroughWhenIdle,
-                           boolean startExpanded) {}
+                           boolean startExpanded) {
+        public Floating withEnabled(boolean v) { return new Floating(v, alwaysOnTop, opacity, width, height, anchor, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withAlwaysOnTop(boolean v) { return new Floating(enabled, v, opacity, width, height, anchor, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withOpacity(double v) { return new Floating(enabled, alwaysOnTop, v, width, height, anchor, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withWidth(double v) { return new Floating(enabled, alwaysOnTop, opacity, v, height, anchor, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withHeight(double v) { return new Floating(enabled, alwaysOnTop, opacity, width, v, anchor, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withAnchor(String v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, v, x, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withX(double v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, anchor, v, y, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withY(double v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, anchor, x, v, customPosition, clickThroughWhenIdle, startExpanded); }
+        public Floating withCustomPosition(boolean v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, anchor, x, y, v, clickThroughWhenIdle, startExpanded); }
+        public Floating withClickThroughWhenIdle(boolean v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, anchor, x, y, customPosition, v, startExpanded); }
+        public Floating withStartExpanded(boolean v) { return new Floating(enabled, alwaysOnTop, opacity, width, height, anchor, x, y, customPosition, clickThroughWhenIdle, v); }
+    }
 
     public record Voice(String provider, String modelPath, String language, String microphone,
-                        boolean pushToTalk, boolean confirmTranscripts) {}
+                        boolean pushToTalk) {
+        public Voice withProvider(String v) { return new Voice(v, modelPath, language, microphone, pushToTalk); }
+        public Voice withModelPath(String v) { return new Voice(provider, v, language, microphone, pushToTalk); }
+        public Voice withLanguage(String v) { return new Voice(provider, modelPath, v, microphone, pushToTalk); }
+        public Voice withMicrophone(String v) { return new Voice(provider, modelPath, language, v, pushToTalk); }
+        public Voice withPushToTalk(boolean v) { return new Voice(provider, modelPath, language, microphone, v); }
+    }
 
-    public record Startup(boolean launchWithWindows, boolean minimizeToTray, boolean startHidden) {}
+    public record Startup(boolean launchWithWindows, boolean minimizeToTray, boolean startHidden) {
+        public Startup withLaunchWithWindows(boolean v) { return new Startup(v, minimizeToTray, startHidden); }
+        public Startup withMinimizeToTray(boolean v) { return new Startup(launchWithWindows, v, startHidden); }
+        public Startup withStartHidden(boolean v) { return new Startup(launchWithWindows, minimizeToTray, v); }
+    }
 
-    public record Developer(boolean enabled, String ide, List<String> projectRoots, int commandTimeoutSeconds) {}
+    public record Developer(boolean enabled, String ide, List<String> projectRoots, int commandTimeoutSeconds) {
+        public Developer withEnabled(boolean v) { return new Developer(v, ide, projectRoots, commandTimeoutSeconds); }
+        public Developer withIde(String v) { return new Developer(enabled, v, projectRoots, commandTimeoutSeconds); }
+        public Developer withProjectRoots(List<String> v) { return new Developer(enabled, ide, v, commandTimeoutSeconds); }
+        public Developer withCommandTimeoutSeconds(int v) { return new Developer(enabled, ide, projectRoots, v); }
+    }
 
-    public record Privacy(int historyRetentionDays, int logRetentionDays, boolean storeTranscripts) {}
+    public record Privacy(int historyRetentionDays, int logRetentionDays, boolean storeTranscripts) {
+        public Privacy withHistoryRetentionDays(int v) { return new Privacy(v, logRetentionDays, storeTranscripts); }
+        public Privacy withLogRetentionDays(int v) { return new Privacy(historyRetentionDays, v, storeTranscripts); }
+        public Privacy withStoreTranscripts(boolean v) { return new Privacy(historyRetentionDays, logRetentionDays, v); }
+    }
 
-    public record Monitoring(boolean enabled, int intervalSeconds) {}
+    public record Monitoring(boolean enabled, int intervalSeconds) {
+        public Monitoring withEnabled(boolean v) { return new Monitoring(v, intervalSeconds); }
+        public Monitoring withIntervalSeconds(int v) { return new Monitoring(enabled, v); }
+    }
 
-    public record Shortcuts(String pushToTalk, String toggleInterface, String dictation) {}
+    public record Shortcuts(String pushToTalk, String toggleInterface, String dictation) {
+        public Shortcuts withPushToTalk(String v) { return new Shortcuts(v, toggleInterface, dictation); }
+        public Shortcuts withToggleInterface(String v) { return new Shortcuts(pushToTalk, v, dictation); }
+        public Shortcuts withDictation(String v) { return new Shortcuts(pushToTalk, toggleInterface, v); }
+    }
 
-    public record Weather(boolean enabled, double latitude, double longitude, String units) {}
+    public record Weather(boolean enabled, double latitude, double longitude, String units) {
+        public Weather withEnabled(boolean v) { return new Weather(v, latitude, longitude, units); }
+        public Weather withLatitude(double v) { return new Weather(enabled, v, longitude, units); }
+        public Weather withLongitude(double v) { return new Weather(enabled, latitude, v, units); }
+        public Weather withUnits(String v) { return new Weather(enabled, latitude, longitude, v); }
+    }
+
+    public DriftSettings withAppearance(Appearance v) { return new DriftSettings(v, floating, voice, startup, developer, privacy, monitoring, shortcuts, weather); }
+    public DriftSettings withFloating(Floating v) { return new DriftSettings(appearance, v, voice, startup, developer, privacy, monitoring, shortcuts, weather); }
+    public DriftSettings withVoice(Voice v) { return new DriftSettings(appearance, floating, v, startup, developer, privacy, monitoring, shortcuts, weather); }
+    public DriftSettings withStartup(Startup v) { return new DriftSettings(appearance, floating, voice, v, developer, privacy, monitoring, shortcuts, weather); }
+    public DriftSettings withDeveloper(Developer v) { return new DriftSettings(appearance, floating, voice, startup, v, privacy, monitoring, shortcuts, weather); }
+    public DriftSettings withPrivacy(Privacy v) { return new DriftSettings(appearance, floating, voice, startup, developer, v, monitoring, shortcuts, weather); }
+    public DriftSettings withMonitoring(Monitoring v) { return new DriftSettings(appearance, floating, voice, startup, developer, privacy, v, shortcuts, weather); }
+    public DriftSettings withShortcuts(Shortcuts v) { return new DriftSettings(appearance, floating, voice, startup, developer, privacy, monitoring, v, weather); }
+    public DriftSettings withWeather(Weather v) { return new DriftSettings(appearance, floating, voice, startup, developer, privacy, monitoring, shortcuts, v); }
 
     public static DriftSettings defaults() {
         return new DriftSettings(
                 new Appearance("Drift Dark", false, ""),
                 new Floating(true, true, 0.95, 360, 64, "RIGHT", 0, 0, false, false, false),
-                new Voice("vosk", "", "en-US", "", true, false),
+                new Voice("vosk", "", "en-US", "", true),
                 new Startup(false, true, false),
                 new Developer(false, "", List.of(), 600),
                 new Privacy(30, 7, false),

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Drift logs: message text passes through %redact (secrets, tokens, user names removed). Rolled daily, capped in size. -->
+  <conversionRule conversionWord="redact" converterClass="com.drift.diagnostics.RedactingMessageConverter"/>
+  <property name="LOG_DIR" value="${drift.home:-${user.home}/.drift}/logs"/>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIR}/drift.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/drift-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>5MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>100MB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{20} - %redact%n%ex{5}</pattern>
+    </encoder>
+  </appender>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss} %-5level %logger{20} - %redact%n</pattern>
+    </encoder>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>
